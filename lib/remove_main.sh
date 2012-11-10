@@ -38,9 +38,6 @@ function get_website_url() {
 # Upgrade
 
 function upgrade() {
-  gpg --keyserver  hkp://keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A && gpg -a --export CD2EFD2A | sudo apt-key add -
-  echo 'echo "deb http://repo.percona.com/apt precise main" >> /etc/apt/sources.list' | sudo -s
-  echo 'echo "deb-src http://repo.percona.com/apt precise main" >> /etc/apt/sources.list' | sudo -s
   yes | sudo apt-get update
   yes | sudo apt-get upgrade
 }
@@ -48,11 +45,11 @@ function upgrade() {
 # Install
 
 function install_tools() {
-  yes | sudo apt-get install openssh-server tmux rsync iptables wget curl build-essential python-software-properties unzip htop pwgen git-core
+  yes | sudo apt-get purge openssh-server tmux rsync iptables wget curl build-essential python-software-properties unzip htop pwgen git-core
 }
 
 function install_new_tmux() {
-  yes | sudo apt-get install build-essential debhelper diffstat dpkg-dev \
+  yes | sudo apt-get purge build-essential debhelper diffstat dpkg-dev \
   fakeroot g++ g++-4.4 html2text intltool-debian libmail-sendmail-perl \
   libncurses5-dev libstdc++6-4.4-dev libsys-hostname-long-perl po-debconf \
   quilt xz-utils libevent-1.4-2 libevent-core-1.4-2 libevent-extra-1.4-2 libevent-dev
@@ -68,15 +65,15 @@ function install_new_tmux() {
 }
 
 function install_nginx() {
-  yes | sudo apt-get install nginx
+  yes | sudo apt-get purge nginx
 }
 
 function install_mysql() {
-  yes | sudo apt-get install libmysqlclient18 libmysqlclient18-dev percona-server-common-5.5 percona-server-server-5.5 percona-server-client-5.5
+  yes | sudo apt-get purge percona-server-server-5.5 percona-server-client-5.5
 }
 
 function install_php() {
-  yes | sudo apt-get install php5-common php5-cli php5-cgi php5-mcrypt \
+  yes | sudo apt-get purge php5-common php5-cli php5-cgi php5-mcrypt \
   php5-mysql libssh2-php php5-xcache php5-curl php5-memcache php5-tidy
   # php5-dev
   # sudo pecl install apc
@@ -84,13 +81,16 @@ function install_php() {
 
 
 function install_varnish() {
-  yes | sudo apt-get install varnish
+  yes | sudo apt-get purge varnish
 }
 
 function install_memcached() {
-  yes | sudo apt-get install memcached libmemcached-tools libmemcached-dev
+  yes | sudo apt-get purge memcached libmemcached libmemcached-tools libmemcached-dev
 }
 
+function auto_remove() {
+  yes | sudo apt-get autoremove
+}
 
 function install_wordpress() {
   mkdir "$HOME/tmp"
@@ -185,14 +185,4 @@ function ip_dump() {
   ifconfig | grep "inet addr" && \
   echo -e "\033[0m"
 }
-
-
-function start_servers() {
-  sudo service php-fastcgi start
-  sudo service memcached start
-  sudo service varnish restart
-  sudo service nginx reload
-  sudo service nginx start
-}
-
 
